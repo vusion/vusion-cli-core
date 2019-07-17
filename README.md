@@ -5,6 +5,12 @@
 
 ## 用法
 
+### prepare
+
+```javascript
+require('vusion-cli-core').prepare('dev', vusionConfig);
+```
+
 ### origin
 
 ```javascript
