@@ -38,7 +38,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 // webpackChain
 module.exports = function (webpackChain, vusionConfig, webpackConfig) {
-    const resolveModules = moduleResolverFac(vusionConfig);
+    const resolveModules = moduleResolverFac(vusionConfig, webpackConfig);
 
     resolveModules.forEach((module) => {
         webpackChain.resolve.modules.add(module);
@@ -54,6 +54,10 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         .set('@', vusionConfig.srcPath)
         .set('@@', vusionConfig.libraryPath)
         .set('~', process.cwd());
+    const aliasPreset = webpackConfig.resolve.alias;
+    Object.keys(aliasPreset).forEach((key) => {
+        webpackChain.resolve.alias.set(key, aliasPreset[key]);
+    });
 
     // devtool
     webpackChain.devtool('eval-source-map');
@@ -124,11 +128,11 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         .use('vue-multifile-loader')
         .loader(vuemultifilePath);
 
-    const extraConfigs = {
-        alias: webpackConfig.alias || {},
-        modules: webpackConfig.modules || {},
-    };
-    const postcssPlugins = postcssPluginsFac(vusionConfig, webpackChain, resolveModules, extraConfigs);
+    // const extraConfigs = {
+    //     alias: webpackConfig.alias || {},
+    //     modules: webpackConfig.modules || {},
+    // };
+    const postcssPlugins = postcssPluginsFac(vusionConfig, webpackChain, resolveModules);// , extraConfigs);
     const cssModuleOption = {
         importLoaders: process.env.NODE_ENV === 'production' ? 6 : 4,
         // localIdentName: '[name]_[local]_[hash:base64:8]',

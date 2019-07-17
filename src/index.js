@@ -7,7 +7,7 @@ module.exports = function (env, vusionConfigPath, theme) {
         vusionConfig,
         webpackConfig,
     } = vusionConfigResolver(vusionConfigPath, theme);
-
+    global.vusionConfig = vusionConfig;
     return {
         factory(chain) {
             // config run time env + scenary

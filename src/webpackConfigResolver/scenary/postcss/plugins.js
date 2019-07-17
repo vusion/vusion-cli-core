@@ -7,27 +7,27 @@ const map_to_obj = ((aMap) => {
     aMap.forEach((v, k) => { obj[k] = v; });
     return obj;
 });
-module.exports = function (vusionConfig, webpackChain, resolveModules, extraConfigs) {
+module.exports = function (vusionConfig, webpackChain, resolveModules) {
     const postcssImportAlias = Object.assign({},
         map_to_obj(webpackChain.resolve.alias.store));
     delete postcssImportAlias.EXTENDS;
     const postcssExtendMark = postcssVusionExtendMark({
         resolve: postcssImportResolver({
             extensions: ['.js'],
-            alias: Object.assign({}, postcssImportAlias, extraConfigs.alias),
-            modules: Object.assign({}, resolveModules, extraConfigs.modules),
+            alias: Object.assign({}, postcssImportAlias),
+            modules: Object.assign({}, resolveModules),
         }),
     });
-    console.log(resolveModules);
-    console.log(postcssImportAlias);
     // Postcss plugins
+    const resolveResult = postcssImportResolver({
+        alias: postcssImportAlias,
+        modules: resolveModules,
+    });
+
     return [
         postcssExtendMark,
         require('postcss-import')({
-            resolve: postcssImportResolver({
-                alias: postcssImportAlias,
-                modules: resolveModules,
-            }),
+            resolve: resolveResult,
             skipDuplicates: false,
             plugins: [postcssExtendMark],
         }),
@@ -35,13 +35,8 @@ module.exports = function (vusionConfig, webpackChain, resolveModules, extraConf
             // Rewrite https://github.com/postcss/postcss-url/blob/master/src/type/rebase.js
             // 只需将相对路径变基，其它让 Webpack 处理即可
             url(asset, dir) {
-                if (asset.url[0] === '@') {
-                    console.log(asset);
-                }
                 if (asset.url[0] !== '.')
                     return asset.url;
-                if (asset.url.startsWith('@'))
-                    console.log(asset.url);
                 let rebasedUrl = path.normalize(path.relative(dir.to, asset.absolutePath));
                 rebasedUrl = path.sep === '\\' ? rebasedUrl.replace(/\\/g, '/') : rebasedUrl;
                 rebasedUrl = `${rebasedUrl}${asset.search}${asset.hash}`;
