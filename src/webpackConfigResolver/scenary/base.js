@@ -113,6 +113,12 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     webpackChain.module
         .rule('vue')
         .test(/\.vue$/)
+        // .use('thread-loader')
+        // .loader('thread-loader')
+        // .end()
+        .use('cache-loader')
+        .loader('cache-loader')
+        .end()
         .use('vue-loader')
         .loader('vue-loader', [{
             compilerOptions: {
@@ -122,6 +128,12 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     webpackChain.module
         .rule('vue-folder')
         .test(/\.vue[\\/]index\.js$/)
+        // .use('thread-loader')
+        // .loader('thread-loader')
+        // .end()
+        .use('cache-loader')
+        .loader('cache-loader')
+        .end()
         .use('vue-loader')
         .loader('vue-loader')
         .end()
