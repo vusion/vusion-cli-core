@@ -21,6 +21,7 @@ class VusionTreeShakingPlugin {
     apply(compiler) {
         compiler.plugin('this-compilation', (compilation) => {
             compilation.plugin('optimize-chunks', (chunks) => {
+                console.log('optimize-chunks : vusion-tree-shaking');
                 chunks.forEach((chunk) => {
                     const modules = chunk.mapModules();
                     const target = this.options.shakingPath;

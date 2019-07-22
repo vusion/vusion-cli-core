@@ -23,13 +23,17 @@ module.exports = function (chain, vusionConfig, webpackConfig) {
         entryOnly: true,
         test: /\.js$/,
     }]);
+
     if (vusionConfig.minifyJS === true || vusionConfig.minifyJS === 'babel-minify') {
         chain.plugin('babel-minify').use(BabelMinifyWebpackPlugin, [Object.assign({}, vusionConfig.options.BabelMinifyWebpackPlugin)]);
     } else if (vusionConfig.minifyJS === 'uglify-js' || vusionConfig.uglifyJS) {
-        chain.plugin('uglify-js').use(UglifyjsWebpackPlugin, [Object.assign({
-            cache: true,
+        // chain.plugin('uglify-js').use(UglifyjsWebpackPlugin, [Object.assign({
+        //     cache: true,
+        //     parallel: true,
+        //     sourceMap: vusionConfig.sourceMap,
+        // }, vusionConfig.options.UglifyjsWebpackPlugin)]);
+        chain.optimization.minimizer('uglify-js').use(UglifyjsWebpackPlugin, [Object.assign({
             parallel: true,
-            sourceMap: vusionConfig.sourceMap,
         }, vusionConfig.options.UglifyjsWebpackPlugin)]);
     }
     // if (chain.entryPoints.store.size === 0) {

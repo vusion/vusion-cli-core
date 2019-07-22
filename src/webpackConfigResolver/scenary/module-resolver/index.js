@@ -1,5 +1,5 @@
 const path = require('path');
-module.exports = function (vusionConfig, webpackConfig) {
+module.exports = function (vusionConfig) {
     let resolveModules;
     if (vusionConfig.resolvePriority === 'cwd')
         resolveModules = [

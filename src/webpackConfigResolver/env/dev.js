@@ -1,5 +1,6 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const webpackConfigSCENARYResolver = require('../scenary');
 
 module.exports = function (chain, vusionConfig, webpackConfig) {
@@ -21,4 +22,8 @@ module.exports = function (chain, vusionConfig, webpackConfig) {
                 }, vusionConfig.options.CopyWebpackPlugin)),
             ]);
     }
+    chain.plugin('BundleAnalyzerPlugin')
+        .use(BundleAnalyzerPlugin, [{
+            analyzerPort: 10086,
+        }]);
 };

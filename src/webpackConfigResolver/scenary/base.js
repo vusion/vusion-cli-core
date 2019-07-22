@@ -29,7 +29,7 @@ const path = require('path');
 const moduleResolverFac = require('./module-resolver/index');
 const postcssPluginsFac = require('./postcss/plugins');
 const importGlobalLoaderPath = require.resolve('./postcss/import-global-loader.js');
-const vuemultifilePath = require.resolve('vue-multifile-loader');
+const vuemultifilePath = require.resolve('vue-multifile-loader-v2');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // 此插件暂时先不配，配上去会报错
 const VueComponentAnalyzerPlugin = require('vue-component-analyzer/src/VueComponentAnalyzerPlugin');
@@ -42,6 +42,10 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
 
     resolveModules.forEach((module) => {
         webpackChain.resolve.modules.add(module);
+    });
+
+    const resolveLoaderModules = moduleResolverFac({});
+    resolveLoaderModules.forEach((module) => {
         webpackChain.resolveLoader.modules.add(module);
     });
 
@@ -54,10 +58,11 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         .set('@', vusionConfig.srcPath)
         .set('@@', vusionConfig.libraryPath)
         .set('~', process.cwd());
-    const aliasPreset = webpackConfig.resolve.alias;
-    Object.keys(aliasPreset).forEach((key) => {
-        webpackChain.resolve.alias.set(key, aliasPreset[key]);
-    });
+    const aliasPreset = webpackConfig.resolve && webpackConfig.resolve.alias;
+    if (aliasPreset)
+        Object.keys(aliasPreset).forEach((key) => {
+            webpackChain.resolve.alias.set(key, aliasPreset[key]);
+        });
 
     // devtool
     webpackChain.devtool('eval-source-map');
@@ -116,9 +121,9 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         // .use('thread-loader')
         // .loader('thread-loader')
         // .end()
-        .use('cache-loader')
-        .loader('cache-loader')
-        .end()
+        // .use('cache-loader')
+        // .loader('cache-loader')
+        // .end()
         .use('vue-loader')
         .loader('vue-loader', [{
             compilerOptions: {
@@ -131,9 +136,9 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         // .use('thread-loader')
         // .loader('thread-loader')
         // .end()
-        .use('cache-loader')
-        .loader('cache-loader')
-        .end()
+        // .use('cache-loader')
+        // .loader('cache-loader')
+        // .end()
         .use('vue-loader')
         .loader('vue-loader')
         .end()
@@ -210,6 +215,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
 
     if (process.env.NODE_ENV === 'production' || vusionConfig.babel) {
         // 存在 dynamic-import error
+        // console.log('babel-loader online');
         webpackChain.module
             .rule('js')
             .test(/\.jsx?$/)
@@ -236,7 +242,9 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
                 return r;
             }).end()
             .use('babel') // no pre rule
-            .loader('babel-loader').end();
+            .loader('babel-loader').options({
+                plugins: ['@babel/plugin-syntax-dynamic-import'],
+            }).end();
     }
 
     if (vusionConfig.lint) {
