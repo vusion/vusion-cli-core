@@ -24,7 +24,7 @@ module.exports = {
         };
 
         const conf = adapterOrigin(factory, vusionConfig, webpackConfig);
-        fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
+        // fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
         // watchHeap();
         return conf;
     },
