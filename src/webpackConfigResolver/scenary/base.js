@@ -35,6 +35,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueComponentAnalyzerPlugin = require('vue-component-analyzer/src/VueComponentAnalyzerPlugin');
 const IconFontPlugin = require('icon-font-loader/src/Plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const getLocalIdent = require('./css-Ident');
 
 // webpackChain
 module.exports = function (webpackChain, vusionConfig, webpackConfig) {
@@ -202,6 +203,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
             // css-loader 3.0 module config
             modules: {
                 mode: 'local',
+                getLocalIdent,
                 localIdentName: '[name]_[local]_[hash:base64:8]',
             },
         }, cssModuleOption));
