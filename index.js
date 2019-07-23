@@ -1,8 +1,8 @@
 const createWebpackChain = require('./src/index.js');
 const adapterOrigin = require('./src/adapterOrigin/index.js');
-const { toString } = require('webpack-chain');
-const fs = require('fs');
-const path = require('path');
+// const { toString } = require('webpack-chain');
+// const fs = require('fs');
+// const path = require('path');
 const webpackConfigENVResolver = require('./src/webpackConfigResolver/env');
 // const heapdump = require('heapdump');
 // print heap usage profile for chrome

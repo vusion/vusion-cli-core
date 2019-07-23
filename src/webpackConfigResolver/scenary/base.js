@@ -36,7 +36,7 @@ const VueComponentAnalyzerPlugin = require('vue-component-analyzer/src/VueCompon
 const IconFontPlugin = require('icon-font-loader/src/Plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const getLocalIdent = require('./css-Ident');
-
+const __DEV__ = process.env.NODE_ENV === 'development';
 // webpackChain
 module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     const resolveModules = moduleResolverFac(vusionConfig, webpackConfig);
@@ -172,7 +172,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         if(query)
             rules.resourceQuery(query);
 
-        rules.when(process.env.NODE_ENV !== 'production' && vusionConfig.extractCSS,
+        rules.when( !__DEV__ && vusionConfig.extractCSS,
             config => { config.use('mini-css-extract').loader(MiniCssExtractPlugin.loader); },
             config => { config.use('vue-style-loader').loader('vue-style-loader'); }
             );

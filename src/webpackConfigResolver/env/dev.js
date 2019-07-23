@@ -22,8 +22,8 @@ module.exports = function (chain, vusionConfig, webpackConfig) {
                 }, vusionConfig.options.CopyWebpackPlugin)),
             ]);
     }
-    chain.plugin('BundleAnalyzerPlugin')
-        .use(BundleAnalyzerPlugin, [{
-            analyzerPort: 10086,
-        }]);
+    // chain.plugin('BundleAnalyzerPlugin')
+    //     .use(BundleAnalyzerPlugin, [{
+    //         analyzerPort: 10086,
+    //     }]);
 };
