@@ -171,7 +171,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
 
         if(query)
             rules.resourceQuery(query);
-
+        console.log(!__DEV__ ,vusionConfig.extractCSS)
         rules.when( !__DEV__ && vusionConfig.extractCSS,
             config => { config.use('mini-css-extract').loader(MiniCssExtractPlugin.loader); },
             config => { config.use('vue-style-loader').loader('vue-style-loader'); }
@@ -287,7 +287,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     // webpackChain.plugin('vue-component-analyzer-plugin')
     //     .use(VueComponentAnalyzerPlugin);
 
-    if (process.env.NODE_ENV !== 'production' && vusionConfig.extractCSS) {
+    if (!__DEV__ && vusionConfig.extractCSS) {
         webpackChain.plugin('mini-css-extract')
             .use(MiniCssExtractPlugin);
     }
