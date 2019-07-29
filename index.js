@@ -38,12 +38,12 @@ module.exports = {
         // fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
         return conf;
     },
-    default(adapter, env, vusionConfigPath, theme) {
+    default(adapter, vusionConfigPath, theme) {
         const {
             factory,
             vusionConfig,
             webpackConfig,
-        } = createWebpackChain(env, vusionConfigPath, theme);
+        } = createWebpackChain(vusionConfigPath, theme);
         adapter(factory, vusionConfig, webpackConfig);
     },
 

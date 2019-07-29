@@ -3,7 +3,7 @@ const path = require('path');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
 
-const TYPES = ['library', 'app', 'html5', 'fullstack'];
+const TYPES = ['library', 'app', 'html5', 'fullstack', 'vue-cli-plugin'];
 const defaults = require('./defaults');
 
 function getConfig(configPath, packagePath) {

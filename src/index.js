@@ -1,7 +1,7 @@
 const vusionConfigResolver = require('./vusionConfigResolver/resolve');
-
-const webpackConfigENVResolver = require('./webpackConfigResolver/env');
-module.exports = function (env, vusionConfigPath, theme) {
+const webpackConfigSCENARYResolver = require('./webpackConfigResolver/scenary');
+// const webpackConfigENVResolver = require('./webpackConfigResolver/env');
+module.exports = function (vusionConfigPath, theme) {
     // resolve vusionConfig
     const {
         vusionConfig,
@@ -11,7 +11,7 @@ module.exports = function (env, vusionConfigPath, theme) {
     return {
         factory(chain) {
             // config run time env + scenary
-            webpackConfigENVResolver(env)(chain, vusionConfig, webpackConfig);
+            webpackConfigSCENARYResolver(chain, vusionConfig, webpackConfig);
         },
         vusionConfig, webpackConfig,
     };
