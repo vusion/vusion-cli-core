@@ -1,8 +1,8 @@
 const createWebpackChain = require('./src/index.js');
 const adapterOrigin = require('./src/adapterOrigin/index.js');
-// const { toString } = require('webpack-chain');
-// const fs = require('fs');
-// const path = require('path');
+const { toString } = require('webpack-chain');
+const fs = require('fs');
+const path = require('path');
 const webpackConfigENVResolver = require('./src/webpackConfigResolver/env');
 // const heapdump = require('heapdump');
 // print heap usage profile for chrome
@@ -33,9 +33,9 @@ module.exports = {
             factory,
             vusionConfig,
             webpackConfig,
-        } = createWebpackChain(env, vusionConfigPath, theme);
+        } = createWebpackChain(vusionConfigPath, theme);
         const conf = adapterOrigin(factory, vusionConfig, webpackConfig);
-        // fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
+        fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
         return conf;
     },
     default(adapter, vusionConfigPath, theme) {

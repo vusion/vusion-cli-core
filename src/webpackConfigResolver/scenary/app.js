@@ -1,5 +1,6 @@
 const webpack = require('webpack');
 const shell = require('shelljs');
+const { toString } = require('webpack-chain');
 const {
     resolve,
     entry,
@@ -46,7 +47,6 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     statics(webpackChain, vusionConfig, webpackConfig);
 
     if (!__DEV__) {
-        webpackChain.mode('production');
         webpackChain.plugin('hash-module-ids').use(webpack.HashedModuleIdsPlugin);
         webpackChain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [{
             minimize: true,
@@ -59,7 +59,8 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         }
         forceShaking(webpackChain, vusionConfig, webpackConfig);
     }
-    console.log(webpackConfig);
-    webpackChain.merge(webpackConfig);
+
+    // console.log(webpackConfig);
+    // console.log(webpackChain.toConfig());
     return webpackChain;
 };

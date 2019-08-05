@@ -14,12 +14,13 @@ module.exports = function (vusionConfig, webpackChain, resolveModules) {
     delete postcssImportAlias.EXTENDS;
     const alias = Object.assign({}, postcssImportAlias);
     const aliasKeys = Object.keys(alias);
+    const resolver = postcssImportResolver({
+        extensions: ['.js'],
+        alias: postcssImportAlias,
+        modules: resolveModules,
+    });
     const postcssExtendMark = postcssVusionExtendMark({
-        resolve: postcssImportResolver({
-            extensions: ['.js'],
-            alias,
-            modules: Object.assign({}, resolveModules),
-        }),
+        resolve: resolver,
     });
     // Postcss plugins
     const resolveResult = postcssImportResolver({
@@ -40,7 +41,7 @@ module.exports = function (vusionConfig, webpackChain, resolveModules) {
             url(asset, dir) {
                 if (asset.url[0] !== '.') {
                     if (asset.url[0] !== '/') {
-                        // alia的书写必须把key最短的写在前面
+                        // alia的书写必须把key最短的写在前面 !important
                         let l = aliasKeys.length;
                         let key = null;
                         while (l--) {
