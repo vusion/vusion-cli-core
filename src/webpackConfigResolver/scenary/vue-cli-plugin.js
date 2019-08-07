@@ -25,6 +25,7 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     css(webpackChain, vusionConfig, webpackConfig);
     media(webpackChain, vusionConfig, webpackConfig);
     js(webpackChain, vusionConfig, webpackConfig);
+
     // webpackChain.merge(webpackConfig);
     return webpackChain;
 };

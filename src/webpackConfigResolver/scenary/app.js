@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const shell = require('shelljs');
-const { toString } = require('webpack-chain');
 const {
     resolve,
     entry,
@@ -17,6 +16,8 @@ const {
     uglyfyjs,
     forceShaking,
 } = require('./phases');
+// const fs = require('fs');
+// const path = require('path');
 // 不需要分 dev, build到两个文件，这个是全局设置的，单独用场景来区分感觉比较好
 const __DEV__ = process.env.NODE_ENV === 'development';
 module.exports = function (webpackChain, vusionConfig, webpackConfig) {
@@ -57,8 +58,20 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
             if (webpackChain.output.get('path') !== process.cwd())
                 shell.rm('-rf', webpackChain.output.get('path'));
         }
+        // webpackChain.optimization.moduleIds('hashed');
         forceShaking(webpackChain, vusionConfig, webpackConfig);
     }
+
+    // webpackChain.plugin('print-webpack-config').use({ // anonymous plugin
+    //     apply(compiler) {
+    //         compiler.hooks.beforeRun.tapAsync('MyCustomBeforeRunPlugin', (compiler, callback) => {
+    //         // debugger
+    //             fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), JSON.stringify(compiler.options));
+    //             console.dir(compiler.options);
+    //             callback();
+    //         });
+    //     },
+    // });
 
     // console.log(webpackConfig);
     // console.log(webpackChain.toConfig());

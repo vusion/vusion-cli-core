@@ -17,5 +17,13 @@ module.exports = function (webpackChain, vusionConfig) {
                     enforce: true,
                 },
             } });
+    } else {
+        webpackChain.optimization
+            .splitChunks({
+                cacheGroups: {
+                    default: false,
+                },
+                maxSize: Number.MAX_VALUE,
+            });
     }
 };

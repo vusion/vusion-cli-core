@@ -2,12 +2,27 @@ const path = require('path');
 const postcssImportResolver = require('postcss-import-resolver');
 const postcssVusionExtendMark = require('./extend-mark');
 const postcssVusionExtendMerge = require('./extend-merge');
-const postcss = require('postcss');
+
 const map_to_obj = ((aMap) => {
     const obj = {};
     aMap.forEach((v, k) => { obj[k] = v; });
     return obj;
 });
+
+// class PostcssVariablesPlugin {
+//     constructor(options) {
+//         this.cssVariables = {};
+//     }
+//     apply(compiler) {
+
+//     }
+// }
+// PostcssVariablesPlugin.collector = function (root) {
+//     Object.assign(this.cssVariables, root.variables);
+// };
+
+// module.exports.PostcssVariablesPlugin = PostcssVariablesPlugin;
+
 module.exports = function (vusionConfig, webpackChain, resolveModules) {
     const postcssImportAlias = Object.assign({},
         map_to_obj(webpackChain.resolve.alias.store));
@@ -94,5 +109,8 @@ module.exports = function (vusionConfig, webpackChain, resolveModules) {
         // precss removed
         require('postcss-calc'),
         postcssVusionExtendMerge,
+        // postcss.plugin('postcss-variables-collection', () => function (root) {
+        //     root.variables
+        // }),
     ].concat(vusionConfig.postcss);
 };

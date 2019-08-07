@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const getLocalIdent = require('../../css-Ident');
 const postcssPluginsFac = require('../../postcss/plugins');
 const importGlobalLoaderPath = require.resolve('../../postcss/import-global-loader.js');
+const postcssVariableBinderPath = require.resolve('../../postcss/variable-reader.js');
 const moduleResolverFac = require('../../module-resolver/index');
 const __DEV__ = process.env.NODE_ENV === 'development';
 
@@ -31,6 +32,9 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
 
         if(query)
             rules.resourceQuery(query);
+        // rules.use('variables-loader')
+        //     .loader(postcssVariableBinderPath)
+        //     .end();
 
         rules.when( !__DEV__ && vusionConfig.extractCSS,
             config => { config.use('mini-css-extract').loader(MiniCssExtractPlugin.loader); },
@@ -57,7 +61,15 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     }
 
     const cssRoot = webpackChain.module.rule('css').test(/\.css$/);
-
+    cssRoot.oneOf('variables')
+        .resourceQuery(/variables/)
+        .use('postcss-variables')
+        .loader(postcssVariableBinderPath)
+        .end()
+        .use('postcss-loader')
+        .loader('postcss-loader')
+        .options({ plugins: () => postcssPlugins })
+        .end();
     cssRuleChain(cssRoot, 'module', /module/,
         Object.assign({
             // css-loader 3.0 module config
@@ -80,4 +92,8 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         webpackChain.plugin('mini-css-extract')
             .use(MiniCssExtractPlugin);
     }
+
+    webpackChain.module.rule('cssvariables').test(/\.css\?variables$/)
+        .use('variable-bridge')
+        .loader(postcssVariableBinderPath);
 };
