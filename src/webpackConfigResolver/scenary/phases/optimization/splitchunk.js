@@ -22,8 +22,8 @@ module.exports = function (webpackChain, vusionConfig) {
             .splitChunks({
                 cacheGroups: {
                     default: false,
+                    vendors: false,
                 },
-                maxSize: Number.MAX_VALUE,
             });
     }
 };
