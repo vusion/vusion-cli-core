@@ -1,5 +1,7 @@
 const IconFontPlugin = require('icon-font-loader/src/Plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserJSPlugin = require('terser-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const getLocalIdent = require('../../css-Ident');
 const postcssPluginsFac = require('../../postcss/plugins');
 const importGlobalLoaderPath = require.resolve('../../postcss/import-global-loader.js');
@@ -90,7 +92,14 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
         .use(IconFontPlugin, [iconfontOptions]);
     if (!__DEV__ && vusionConfig.extractCSS) {
         webpackChain.plugin('mini-css-extract')
-            .use(MiniCssExtractPlugin);
+            .use(MiniCssExtractPlugin, [{
+                filename: '[name].css',
+                chunkFilename: '[name].[chunkhash:16].css',
+            }]);
+        // webpackChain.optimization.minimizer('terser').use(TerserJSPlugin, [{
+        //     parallel: true,
+        // }]);
+        webpackChain.optimization.minimizer('optimize-css-assets').use(OptimizeCSSAssetsPlugin, [{}]);
     }
 
     webpackChain.module.rule('cssvariables').test(/\.css\?variables$/)

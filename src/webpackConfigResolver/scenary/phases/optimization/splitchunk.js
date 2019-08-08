@@ -1,4 +1,7 @@
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 module.exports = function (webpackChain, vusionConfig) {
+    const splitChunksConfig = {};
     if (vusionConfig.entry && vusionConfig.entry.commons) {
         // deprecated!
         // webpackConfig.plugin('webpack-common-chunk-plugin')
@@ -8,22 +11,21 @@ module.exports = function (webpackChain, vusionConfig) {
         //     });
 
         // alternative https://github.com/webpack/webpack/issues/6357
-        webpackChain.optimization
-            .splitChunks({ cacheGroups: {
-                commons: {
-                    chunks: 'initial',
-                    minChunks: 3,
-                    name: 'commons',
-                    enforce: true,
-                },
-            } });
+        splitChunksConfig.cacheGroups = {
+            commons: {
+                chunks: 'initial',
+                minChunks: 3,
+                name: 'commons',
+                enforce: true,
+            },
+        };
     } else {
-        webpackChain.optimization
-            .splitChunks({
-                cacheGroups: {
-                    default: false,
-                    vendors: false,
-                },
-            });
+        splitChunksConfig.cacheGroups = {
+            default: false,
+            vendors: false,
+        };
     }
+
+    webpackChain.optimization
+        .splitChunks(splitChunksConfig);
 };

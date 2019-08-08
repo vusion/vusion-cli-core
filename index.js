@@ -33,8 +33,9 @@ module.exports = {
             factory,
             vusionConfig,
             webpackConfig,
+            finnalConfig,
         } = createWebpackChain(vusionConfigPath, theme);
-        const conf = adapterOrigin(factory, vusionConfig, webpackConfig);
+        const conf = adapterOrigin(factory, vusionConfig, webpackConfig, finnalConfig);
         // conf.optimization.moduleIds = 'hashed';
         fs.writeFileSync(path.resolve(process.cwd(), 'webpack-vusion-cli-core.txt'), toString(conf));
         return conf;
