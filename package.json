@@ -1,13 +1,13 @@
 {
   "name": "vusion-cli-core",
-  "version": "0.0.8",
+  "version": "0.10.0",
+  "author": "wt911122 <452663934@qq.com>",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "husky": "^3.0.0",
     "mocha": "^6.1.4",
@@ -57,9 +57,9 @@
     "try-require": "^1.2.1",
     "uglifyjs-webpack-plugin": "^2.1.3",
     "update-notifier": "^3.0.0",
-    "vue-component-analyzer": "file:../vue-component-analyzer",
+    "vue-component-analyzer": "^0.2.0",
     "vue-loader": "^15.7.0",
-    "vue-multifile-loader-v2": "^15.0.1-beta.1",
+    "vue-multifile-loader": "^15.0.0",
     "vue-template-compiler": "^2.6.10",
     "webpack": "^4.35.3",
     "webpack-bundle-analyzer": "^3.3.2",
