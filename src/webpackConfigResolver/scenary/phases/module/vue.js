@@ -17,7 +17,7 @@
      *      },
      **/
 
-const vuemultifilePath = require.resolve('vue-multifile-loader-v2');
+const vuemultifilePath = require.resolve('vue-multifile-loader');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = function (webpackChain) {
     webpackChain.module
