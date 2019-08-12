@@ -16,21 +16,11 @@ module.exports = function (vusionConfig, webpackConfig) {
                 .splitChunks
                 .cacheGroups[`${entry}Styles`] = {
                     name: `${entry}Styles`, // 一定要加个后缀，不能跟入口重名了
-                    test: (m) => {
-                        if (m.constructor.name === 'CssModule') {
-                            const i = recursiveIssuer(m);
-                            if (!p.find((o) => o === i)) {
-                                console.log(i);
-                                p.push(i);
-                            }
-                        }
-
-                        return m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry;
-                    },
-
-                    chunks: 'all',
+                    test: (m) => m.constructor.name === 'CssModule' && recursiveIssuer(m) === entry,
+                    chunks: 'async',
                     enforce: true,
                 };
+            // webpackConfig.entry[entry] = [`${entry}Styles.css`, webpackConfig.entry[entry]];
         }
     }
 };
