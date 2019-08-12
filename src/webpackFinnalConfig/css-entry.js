@@ -20,6 +20,7 @@ module.exports = function (vusionConfig, webpackConfig) {
                     chunks: 'async',
                     enforce: true,
                 };
+
             // webpackConfig.entry[entry] = [`${entry}Styles.css`, webpackConfig.entry[entry]];
         }
     }
