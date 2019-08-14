@@ -14,6 +14,7 @@ const {
     devtool,
     banner,
     uglyfyjs,
+    terser,
     forceShaking,
 } = require('./phases');
 // const fs = require('fs');
@@ -48,12 +49,16 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     statics(webpackChain, vusionConfig, webpackConfig);
 
     if (!__DEV__) {
+        webpackChain.node
+            .set('fs', 'empty')
+            .set('child_process', 'empty');
         webpackChain.plugin('hash-module-ids').use(webpack.HashedModuleIdsPlugin);
         webpackChain.plugin('loader-options').use(webpack.LoaderOptionsPlugin, [{
             minimize: true,
         }]);
         banner(webpackChain, vusionConfig, webpackConfig);
         uglyfyjs(webpackChain, vusionConfig, webpackConfig);
+        terser(webpackChain, vusionConfig, webpackConfig);
         if (vusionConfig.clean) {
             if (webpackChain.output.get('path') !== process.cwd())
                 shell.rm('-rf', webpackChain.output.get('path'));

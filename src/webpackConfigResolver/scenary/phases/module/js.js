@@ -1,6 +1,8 @@
 const path = require('path');
+const __DEV__ = process.env.NODE_ENV === 'development';
+
 module.exports = function (webpackChain, vusionConfig) {
-    if (process.env.NODE_ENV === 'production' || vusionConfig.babel) {
+    if (!__DEV__ || vusionConfig.babel) {
         // 存在 dynamic-import error
         // console.log('babel-loader online');
         webpackChain.module
@@ -24,12 +26,12 @@ module.exports = function (webpackChain, vusionConfig) {
                     else
                         return false;
                 });
-                    // if (!r)
-                    //     console.log(filepath, r);
+
                 return r;
             }).end()
             .use('babel') // no pre rule
             .loader('babel-loader').options({
+
                 plugins: ['@babel/plugin-syntax-dynamic-import'],
             }).end();
     }

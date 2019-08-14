@@ -1,22 +1,26 @@
 const IconFontPlugin = require('icon-font-loader/src/Plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const TerserJSPlugin = require('terser-webpack-plugin');
+const CSSSpritePlugin = require('css-sprite-loader').Plugin;
+// const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const getLocalIdent = require('../../css-Ident');
 const postcssPluginsFac = require('../../postcss/plugins');
 const importGlobalLoaderPath = require.resolve('../../postcss/import-global-loader.js');
 const postcssVariableBinderPath = require.resolve('../../postcss/variable-reader.js');
 const moduleResolverFac = require('../../module-resolver/index');
+
 const __DEV__ = process.env.NODE_ENV === 'development';
 
 module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     const resolveModules = moduleResolverFac(vusionConfig, webpackConfig);
     const postcssPlugins = postcssPluginsFac(vusionConfig, webpackChain, resolveModules);// , extraConfigs);
     const cssModuleOption = {
-        importLoaders: process.env.NODE_ENV === 'production' ? 6 : 4,
+        // importLoaders: process.env.NODE_ENV === 'production' ? 6 : 4,
         // localIdentName: '[name]_[local]_[hash:base64:8]',
-        // minimize: process.env.NODE_ENV === 'production' && !!(vusionConfig.uglifyJS || vusionConfig.minifyJS),
+        minimize: vusionConfig.uglifyJS || vusionConfig.minifyJS,
         sourceMap: vusionConfig.sourceMap,
+        // minimize: config.uglifyJS || config.minifyJS,
+        // sourceMap: config.sourceMap,
     };
     /* eslint-disable */
     // url	{Boolean|Function}	true	Enable/Disable url() handling
@@ -43,15 +47,20 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
             config => { config.use('vue-style-loader').loader('vue-style-loader'); }
             );
 
+
         rules.use('css-loader')
              .loader('css-loader')
-             .options(cssModuleOptions)
-             .end()
-          .use('icon-font-loader')
+             .options(cssModuleOptions);
+
+        if(!__DEV__){
+            rules.use('css-sprite-loader').loader('css-sprite-loader');
+            rules.use('svg-classic-sprite-loader').loader('svg-classic-sprite-loader?filter=query');
+        }
+        rules.use('icon-font-loader')
               .loader('icon-font-loader')
               .end()
           .use('postcss-loader')
-             .loader('postcss-loader')
+             .loader(require.resolve('postcss-loader'))
              .options({ plugins: () => postcssPlugins })
              .end()
           .use('import-global-loader')
@@ -75,11 +84,21 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
     cssRuleChain(cssRoot, 'module', /module/,
         Object.assign({
             // css-loader 3.0 module config
-            modules: {
-                mode: 'local',
-                getLocalIdent,
-                localIdentName: '[name]_[local]_[hash:base64:8]',
-            },
+            importLoaders: process.env.NODE_ENV === 'production' ? 6 : 4,
+            localIdentName: '[name]_[local]_[hash:base64:8]',
+            minimize: process.env.NODE_ENV === 'production' && !!(vusionConfig.uglifyJS || vusionConfig.minifyJS),
+            modules: true,
+            getLocalIdent,
+            // modules: {
+            //     mode: 'local',
+            //     getLocalIdent,
+            //     localIdentName: '[name]_[local]_[hash:base64:8]',
+            // },
+            // url: (item, resourcePath) => {
+            //     if (item[0] !== '.')
+            //         return false;
+            //     return true;
+            // },
         }, cssModuleOption));
     cssRuleChain(cssRoot, 'normal', '', cssModuleOption);
 
@@ -96,13 +115,56 @@ module.exports = function (webpackChain, vusionConfig, webpackConfig) {
                 filename: '[name].css',
                 chunkFilename: '[name].[chunkhash:16].css',
             }]);
+        if (!webpackConfig.optimization)
+            webpackConfig.optimization = { minimizer: [] };
+        if (!webpackConfig.optimization.minimizer)
+            webpackConfig.optimization.minimizer = [];
+        webpackConfig.optimization.minimizer.push(new OptimizeCSSAssetsPlugin({
+            assetNameRegExp: /\.css\.*(?!.*map)/g,
+            cssProcessor: require('cssnano'),
+            cssProcessorOptions: {
+                discardComments: { removeAll: true },
+                // 避免 cssnano 重新计算 z-index
+                safe: true,
+                // cssnano 集成了autoprefixer的功能
+                // 会使用到autoprefixer进行无关前缀的清理
+                // 关闭autoprefixer功能
+                // 使用postcss的autoprefixer功能
+                autoprefixer: false,
+            },
+            canPrint: true,
+        }));
+        // webpackChain.plugin('mini-css-extract-cleanup').use(
+        //     class MiniCssExtractPluginCleanup {
+        //         constructor(deleteWhere = /\.js(\.map)?$/) {
+        //             this.shouldDelete = new RegExp(deleteWhere);
+        //         }
+
+        //         apply(compiler) {
+        //             compiler.hooks.emit.tapAsync('MiniCssExtractPluginCleanup', (compilation, callback) => {
+        //                 Object.keys(compilation.assets).forEach((asset) => {
+        //                     if (this.shouldDelete.test(asset)) {
+        //                         delete compilation.assets[asset];
+        //                     }
+        //                 });
+        //                 callback();
+        //             });
+        //         }
+        //     }
+        // );
         // webpackChain.optimization.minimizer('terser').use(TerserJSPlugin, [{
         //     parallel: true,
         // }]);
-        webpackChain.optimization.minimizer('optimize-css-assets').use(OptimizeCSSAssetsPlugin, [{}]);
+
+        // webpackChain.optimization.minimizer('optimize-css-assets').use(OptimizeCSSAssetsPlugin, [{}]);
     }
 
-    webpackChain.module.rule('cssvariables').test(/\.css\?variables$/)
-        .use('variable-bridge')
-        .loader(postcssVariableBinderPath);
+    if (!__DEV__) {
+        webpackChain.plugin('css-sprite-plugin').use(CSSSpritePlugin, [
+            Object.assign({
+                imageSetFallback: true,
+                plugins: postcssPlugins,
+            }, vusionConfig.options.CSSSpritePlugin),
+        ]);
+    }
 };
